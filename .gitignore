@@ -5,3 +5,5 @@ venv/
 .idea/
 .deepeval/
 .pytest_cache/
+logs/
+week2-redteam-results.json
