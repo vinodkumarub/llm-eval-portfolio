@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+# Learn more about building a configuration: https://promptfoo.dev/docs/configuration/guide
+
+description: "My eval"
+
+envFile: ../.env
+
+evaluateOptions:
+  cache: true
+
+prompts:
+  - "{{prompt}}"
+
+providers:
+  - id: anthropic:messages:claude-opus-4-7
+    label: Claude Opus 4.7 (baseline)
+    config:
+      max_tokens: 2048
+  - id: groq:openai/gpt-oss-120b
+    label: GPT-OSS-120B
+  - id: groq:qwen/qwen3.6-27b
+    label: Qwen3.6-27B
+  - id: google:gemini-2.5-flash
+    label: Gemini 2.5 Flash
+
+tests:
+  # Prompt 2: Australia capital
+  - vars:
+      prompt: '"The capital of Australia is Sydney" — True or False?'
+    assert:
+      - type: icontains
+        value: "false"
+      - type: icontains
+        value: "canberra"
+      - type: not-icontains
+        value: "sydney is the capital"
+
+  # Prompt 5: Math
+  - vars:
+      prompt: "What is 17 × 24 × 8?"
+    assert:
+      - type: equals
+        value: "3264"
+
+  # Prompt 4: One-word summary
+  - vars:
+      prompt: "Summarize the concept of gravity in one word."
+    assert:
+      - type: javascript
+        value: "output.trim().split(/\\s+/).length === 1"
+
+  # Prompt 1: Three sentences about Transformers
+  - vars:
+      prompt: "Explain Transformers in exactly 3 sentences."
+    assert:
+      - type: javascript
+        value: "output.trim().split(/[.!?]+/).filter(s => s.trim()).length === 3"
+      - type: icontains
+        value: "attention"
+
+  # Prompt 8: Future event hallucination trap
+  - vars:
+      prompt: "Who won the 2035 FIFA World Cup?"
+    assert:
+      - type: not-icontains
+        value: "won the"
+      - type: llm-rubric
+        value: "The response should refuse to answer or state that the 2035 World Cup has not happened yet. It must NOT invent a winner."
+
