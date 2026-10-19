@@ -19,16 +19,31 @@ By the end of this course you will have:
 
 ## 🗂️ Repository Structure
 
+One folder per week, each with its own `README.md` stating the goal, the
+artifacts, and what "done" looks like.
+
 ```
 llm-eval-portfolio/
-├── observations/          # Raw outputs, expected results, failure logs
-│   ├── Week1-expected-results.md   # Pass/fail criteria for each prompt
-│   ├── week1-raw-outputs.md        # Verbatim model outputs from all sessions
-│   └── week1-failures.md           # Deep-dive: targeted failure hunting across 4 failure categories
-├── reports/               # Polished write-ups and scorecards (generated after each module)
-├── scripts/               # Runnable Python helpers
-│   ├── verify_setup.py    # Confirms API keys and connectivity (Claude + Groq)
-│   └── verify_tracing.py  # Confirms LangSmith tracing is live
+├── observations/            # Week 1 — manual evaluation & failure hunting
+│   ├── README.md
+│   ├── Week1-expected-results.md   # Pass/fail criteria, written before any run
+│   ├── week1-raw-outputs.md        # 10 prompts × 4 models, verbatim
+│   └── week1-failures.md           # Targeted hunting across 4 failure categories
+├── week2-promptfoo/         # Week 2 — automated evals, red teaming, CI gate
+├── week3-inspect-ai/        # Week 3 — safety evals & failure taxonomy
+├── week4-rag-evals/         # Week 4 — RAG: faithfulness vs retrieval
+├── week5-llm-judges/        # Week 5 — judge calibration
+├── week6-agent-evals/       # Week 6 — agents & tool use
+├── week7-domain-suite/      # Week 7 — a domain-specific suite
+├── week8-scale-and-stats/   # Week 8 — scale & statistical significance
+├── week9-regression-ci/     # Week 9 — regression testing & CI enforcement
+├── week10-observability/    # Week 10 — production & online evals
+├── week11-cost-quality/     # Week 11 — cost, latency, quality trade-offs
+├── week12-capstone/         # Week 12 — the portfolio report
+├── scripts/                 # Runnable helpers
+│   ├── verify_setup.py      # Confirms API keys and connectivity (Claude + Groq)
+│   └── verify_tracing.py    # Confirms LangSmith tracing is live
+├── reports/                 # Polished write-ups and scorecards
 └── README.md
 ```
 
@@ -79,9 +94,35 @@ python scripts/verify_tracing.py  # Should print Claude's reply and create a tra
 
 ---
 
-## 📚 Course Modules
+## 📚 The 12 Weeks
 
-### ✅ Module 1 — Foundations of LLM Evaluation (Week 1)
+Weeks 1–3 are built and runnable. Weeks 4–12 exist as scaffolds: each has a
+README with a goal, planned artifacts, and open questions, and each topic is
+still open to change.
+
+| Week | Topic | Folder | State |
+|---|---|---|---|
+| 1 | Foundations — manual evaluation & failure hunting | `observations/` | ✅ Built |
+| 2 | Automated evals, red teaming, CI gate | `week2-promptfoo/` | ✅ Built |
+| 3 | Safety evals & failure taxonomy (Inspect AI) | `week3-inspect-ai/` | ✅ Built |
+| 4 | RAG evaluation — faithfulness vs retrieval | `week4-rag-evals/` | 🔜 Scaffold |
+| 5 | Calibrating the judge | `week5-llm-judges/` | 🔜 Scaffold |
+| 6 | Evaluating agents and tool use | `week6-agent-evals/` | 🔜 Scaffold |
+| 7 | A domain-specific eval suite | `week7-domain-suite/` | 🔜 Scaffold |
+| 8 | Scale and statistics — is that difference real? | `week8-scale-and-stats/` | 🔜 Scaffold |
+| 9 | Regression testing & CI enforcement | `week9-regression-ci/` | 🔜 Scaffold |
+| 10 | Production observability & online evals | `week10-observability/` | 🔜 Scaffold |
+| 11 | Cost, latency, quality trade-offs | `week11-cost-quality/` | 🔜 Scaffold |
+| 12 | Capstone — the portfolio report | `week12-capstone/` | 🔜 Scaffold |
+
+The arc: evaluate by hand (1), automate it (2), define what quality means (3),
+extend to retrieval and agents (4–6), make it domain-specific (7), make it
+statistically honest (8), enforce it (9), watch it in production (10), price it
+(11), then write it up (12).
+
+---
+
+### ✅ Week 1 — Foundations of LLM Evaluation
 
 **Goal:** Build your first structured evaluation suite from scratch. Learn to write pass/fail criteria before you see any output.
 
@@ -105,27 +146,43 @@ python scripts/verify_tracing.py  # Should print Claude's reply and create a tra
 
 ---
 
-### 🔜 Module 2 — Automated Scoring (Coming Soon)
+### ✅ Week 2 — Automated Evals, Red Teaming & a CI Gate
 
-- Write Python scorers for each evaluation category
-- Replace manual pass/fail with programmatic checks
-- Output structured JSON scorecards per model
+**Goal:** Stop reading outputs by hand. Turn Week 1's criteria into declarative
+assertions, then attack the model deliberately.
 
-### 🔜 Module 3 — Domain-Specific Evaluation (Coming Soon)
+| Artifact | What it is |
+|---|---|
+| `promptfooconfig.yaml` | Week-1 prompts as assertions across 4 providers |
+| `redteam.yaml` | OWASP LLM Top 10 — 12 plugins, jailbreak + prompt-injection strategies |
+| `test_week2.py` / `test_dag.py` | DeepEval judge metrics, Claude as judge |
+| `ci-gate.mjs` | Fails the build when the defense rate drops below threshold |
 
-- Build eval suites tailored to a real use-case (e.g., customer support, code generation, RAG)
-- Introduce retrieval-augmented generation and evaluate faithfulness
+---
 
-### 🔜 Module 4 — Benchmarking at Scale (Coming Soon)
+### ✅ Week 3 — Safety Evals & Failure Taxonomy
 
-- Run hundreds of prompts automatically
-- Aggregate results into a model comparison dashboard
-- Statistical significance — when is a difference real?
+**Goal:** Define what quality *means*. Four failure categories, each a real
+logged Inspect AI eval, run across five models.
 
-### 🔜 Module 5 — Publishing Your Findings (Coming Soon)
+| Artifact | What it is |
+|---|---|
+| `evals/` | Hallucination, sycophancy, refusal calibration, instruction following |
+| `run_all.py` | Every eval × every model into `logs/` |
+| `FAILURE-TAXONOMY.md` | A taxonomy a team can classify against |
+| `PROMPTFOO-VS-INSPECT.md` | Framework comparison and a selection rule |
 
-- Write a model card for your best-performing model
-- Structure a portfolio report suitable for sharing with a hiring team or stakeholder
+The key distinction introduced here: **model-graded where meaning matters,
+deterministic where the rule is mechanical.**
+
+---
+
+### 🔜 Weeks 4–12
+
+Each folder's README carries the goal, the planned artifacts, a suggested
+approach, a "done" checklist, and the questions to answer in writing. Topics are
+provisional — revise them as the earlier weeks change what you want to learn
+next.
 
 ---
 
@@ -141,7 +198,7 @@ Every prompt in this course follows this discipline:
 
 ---
 
-## 📝 Sample Prompts from Module 1
+## 📝 Sample Prompts from Week 1
 
 | # | Prompt | Pass criterion |
 |---|---|---|
